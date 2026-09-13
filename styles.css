@@ -1,0 +1,233 @@
+:root {
+  --bg: #0f172a;
+  --card-bg: #1e293b;
+  --accent: #f59e0b;
+  --title-color: #f59e0b;
+  --desc-color: #94a3b8;
+  --title-font: system-ui, -apple-system, sans-serif;
+  --body-font: system-ui, -apple-system, sans-serif;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --error: #ef4444;
+  --success: #22c55e;
+}
+
+body { margin: 0; font-family: var(--body-font); background-color: var(--bg); background-size: cover; background-position: center; background-attachment: fixed; color: var(--text); min-height: 100vh; position: relative; }
+.bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 0; pointer-events: none; }
+/* bottom:95px (en vez de 25px) para que la pila de WhatsApp/Telegram/X/Instagram
+   quede SIEMPRE arriba de la burbuja del chat de IA (widget de Forja, fija en
+   bottom:20px/right:20px, 58px de diámetro, z-index altísimo) -- si se dejan a
+   la misma altura, la burbuja del chat queda encima y tapa estos botones. */
+.social-float-stack { position: fixed; bottom: 95px; right: 25px; display: flex; flex-direction: column-reverse; align-items: flex-end; gap: 0.7rem; z-index: 100; transition: bottom 0.2s; }
+/* "Squircle" 50x40 -- ancho = 50px, largo (alto) = 40px, esquinas curveadas.
+   Los 4 iconos (WhatsApp/Telegram/X/Instagram) comparten esta misma forma.
+   box-sizing:border-box para que el padding no agrande el tamaño real. */
+.social-float { box-sizing: border-box; background-color: #25d366; color: #ffffff !important; border-radius: 10px; padding: 0; display: flex; align-items: center; justify-content: center; gap: 0.6rem; text-decoration: none; font-weight: bold; font-size: 0.95rem; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); transition: transform 0.2s ease; width: 50px; height: 40px; }
+.social-float:hover { transform: scale(1.08); }
+.social-icon, .whatsapp-icon { width: 20px; height: 20px; flex-shrink: 0; }
+.telegram-float { background-color: #229ED9; }
+.x-float { background-color: #000000; }
+.instagram-float { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+h1, h2, h3, h4, .category-title { font-family: var(--title-font); color: var(--title-color) !important; }
+p, span, label, input, select, button { font-family: var(--body-font); }
+.subtitle, .item-info p, .text-muted, .login-subtitle { color: var(--desc-color) !important; }
+.hidden { display: none !important; }
+
+.top-bar { position: relative; z-index: 10; display: flex; justify-content: flex-end; padding: 1rem 2rem; }
+.btn-primary-sm { background: var(--accent); color: #0f172a; border: none; padding: 0.5rem 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.btn-secondary-sm { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; white-space: nowrap; }
+.btn-danger-sm { background: var(--error); color: #ffffff; border: none; padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
+.btn-edit-sm { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 0.3rem 0.6rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+.login-card { background: var(--card-bg); padding: 2.5rem; border-radius: 12px; border: 1px solid var(--border); width: 100%; max-width: 360px; position: relative; }
+.alert-card { border-color: var(--error); text-align: center; }
+.modal-actions { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; }
+.close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+
+/* Aviso de privacidad -- pastillita fija en la esquina inferior izquierda,
+   chica y discreta; queda por ENCIMA de donde aparece el mini-badge del
+   carrito (bottom:20px) para que nunca se tapen entre sí. */
+.privacy-notice-btn { position: fixed; bottom: 78px; left: 20px; z-index: 190; background: var(--card-bg); color: var(--desc-color); border: 1px solid var(--border); border-radius: 50px; padding: 0.4rem 0.8rem; font-size: 0.75rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.privacy-notice-btn:hover { color: var(--text); border-color: var(--accent); }
+.privacy-card { max-width: 480px; max-height: 80vh; overflow-y: auto; }
+.privacy-body p { font-size: 0.9rem; line-height: 1.55; color: var(--desc-color); margin: 0 0 0.9rem; }
+.privacy-body p:last-child { margin-bottom: 0; }
+.privacy-body strong { color: var(--title-color); }
+.input-group { margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+.input-group label { font-size: 0.85rem; color: var(--desc-color); }
+.input-group input, .input-group select { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 0.65rem; border-radius: 6px; outline: none; }
+.input-group input[type="file"] { padding: 0.4rem; background: var(--card-bg); cursor: pointer; }
+.input-group input[type="color"] { height: 45px; padding: 0.2rem; cursor: pointer; }
+.error-msg { color: var(--error) !important; font-size: 0.85rem; margin: 0.5rem 0; min-height: 1.2em; }
+
+.menu-container { position: relative; z-index: 5; max-width: 700px; margin: 0 auto; padding: 0 1rem 2rem; display: flex; flex-direction: column; gap: 1.5rem; overflow-x: hidden; }
+.header { text-align: center; margin-bottom: 2rem; }
+/* Sin esto el logo se ve a su tamaño real (subido grande) y se sale de la
+   pantalla en celular -- lo limitamos para que siempre quepa, centrado. */
+.brand-logo-img { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto 0.5rem; }
+.day-filter-container { margin-top: 1.2rem; display: flex; justify-content: center; align-items: center; gap: 0.8rem; }
+.day-filter-container select { background: var(--card-bg); color: var(--accent); border: 1px solid var(--accent); padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: bold; }
+.takeout-option-box { margin-top: 1rem; background: rgba(245, 158, 11, 0.1); border: 1px solid var(--accent); display: inline-block; padding: 0.6rem 1.2rem; border-radius: 8px; }
+.checkbox-label { display: flex; align-items: center; gap: 0.6rem; cursor: pointer; font-size: 0.95rem; }
+
+.menu-section { background: var(--card-bg); border-radius: 8px; padding: 1.5rem; border: 1px solid var(--border); margin-bottom: 1.5rem; }
+.category-title { margin-top: 0; border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; }
+.menu-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 1.5rem; padding: 0.8rem 0; border-bottom: 1px dashed var(--border); }
+.menu-item:last-child { border-bottom: none; }
+.menu-item.sold-out { opacity: 0.45; }
+.item-info { flex: 1; }
+.item-info h3 { margin: 0; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem; }
+.badge-soldout { font-size: 0.75rem; color: var(--error) !important; font-weight: bold; border: 1px solid var(--error); padding: 0.1rem 0.4rem; border-radius: 4px; }
+.badge-stock { font-size: 0.75rem; color: var(--success) !important; font-weight: bold; border: 1px solid var(--success); padding: 0.1rem 0.4rem; border-radius: 4px; }
+.price-container { display: flex; flex-direction: column; align-items: flex-end; }
+.price { font-weight: bold; color: var(--accent); white-space: nowrap; font-size: 1.05rem; }
+.takeout-badge { font-size: 0.72rem; color: var(--accent); white-space: nowrap; margin-top: 0.2rem; }
+
+.dashboard-container { position: relative; z-index: 5; display: flex; justify-content: center; padding: 2rem 1rem; }
+.admin-panel { max-width: 700px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 1.5rem; }
+.admin-panel.wide { max-width: 1100px; }
+.admin-nav-bar { display: flex; justify-content: flex-end; border-bottom: 1px solid var(--border); padding-bottom: 1rem; }
+.admin-nav-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.btn-nav { background: var(--card-bg); color: var(--desc-color); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-nav.active { background: var(--accent); color: #0f172a !important; border-color: var(--accent); }
+.welcome-card { background: var(--card-bg); border: 1px solid var(--accent); border-radius: 12px; padding: 3rem 2rem; text-align: center; }
+.admin-sub-section { display: flex; flex-direction: column; gap: 1.5rem; }
+.admin-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; }
+.admin-card h2 { margin-top: 0; font-size: 1.1rem; }
+.n8n-endpoint-title { margin-top: 1.2rem; margin-bottom: 0.3rem; color: var(--accent); font-size: 0.95rem; }
+.form-row { display: flex; gap: 1rem; }
+.form-row.align-end { align-items: flex-end; }
+.form-actions { display: flex; gap: 0.5rem; }
+.preview-box { background: var(--bg); padding: 1rem; border-radius: 6px; border: 1px solid var(--border); }
+.accomp-picker-row { border-bottom: 1px dashed var(--border); padding: 0.5rem 0; }
+.accomp-picker-row:last-child { border-bottom: none; }
+.accomp-picker-extra { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0.4rem 0 0 1.6rem; font-size: 0.85rem; }
+.accomp-picker-extra label { display: flex; align-items: center; gap: 0.3rem; }
+.preview-category { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: rgba(255,255,255,0.03); }
+.preview-category:last-child { margin-bottom: 0; }
+.preview-category-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; margin-bottom: 0.8rem; }
+.preview-dish-item { display: flex; justify-content: space-between; align-items: center; margin-left: 1rem; font-size: 0.9rem; margin-bottom: 0.5rem; padding: 0.3rem 0; }
+.action-btns { display: flex; gap: 0.4rem; }
+
+.schedule-matrix-wrapper { overflow-x: auto; margin-top: 1rem; border: 1px solid var(--border); border-radius: 8px; }
+.schedule-matrix-table { width: 100%; border-collapse: collapse; min-width: 900px; background: var(--bg); }
+.schedule-matrix-table th, .schedule-matrix-table td { border: 1px solid var(--border); padding: 0.8rem; vertical-align: top; text-align: left; }
+.schedule-matrix-table th { background: var(--card-bg); font-size: 0.9rem; }
+.matrix-cat-title { font-weight: bold; white-space: nowrap; }
+.matrix-item-tag { background: var(--card-bg); border: 1px solid var(--border); border-radius: 4px; padding: 0.4rem; margin-bottom: 0.4rem; font-size: 0.8rem; display: flex; flex-direction: column; gap: 0.2rem; }
+.matrix-item-tag.sold-out { opacity: 0.5; border-color: var(--error); }
+.matrix-item-title { font-weight: bold; color: var(--text); }
+.matrix-item-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.2rem; }
+
+.btn-toggle-available { background: rgba(34, 197, 94, 0.15); border: 1px solid var(--success); color: var(--success); padding: 0.2rem 0.4rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+.btn-toggle-soldout { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--error); color: var(--error); padding: 0.2rem 0.4rem; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
+
+/* --- Stock Compacto --- */
+.stock-input-container { display: flex; align-items: center; gap: 0.3rem; font-size: 0.75rem; margin-top: 0.3rem; }
+.stock-label { color: var(--text-muted); font-weight: bold; white-space: nowrap; }
+.stock-input { width: 55px; padding: 0.2rem; font-size: 0.8rem; text-align: center; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 4px; }
+
+/* --- Imagen de platillo --- */
+.dish-image-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 0.5rem; }
+.menu-item-image { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+.item-info { display: flex; gap: 0.8rem; align-items: flex-start; }
+.item-info-text { flex: 1; }
+.takeout-hint { font-size: 0.78rem; margin: 0.3rem 0 0.8rem; }
+
+/* --- Selector de Sopa --- */
+.soup-size-selector { margin-top: 0.8rem; display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--desc-color); }
+.soup-size-selector select { background: var(--card-bg); color: var(--text); border: 1px solid var(--accent); padding: 0.3rem 0.6rem; border-radius: 4px; }
+
+/* --- Franjas horarias / Comida --- */
+#public-mealtime-select { background: var(--card-bg); color: var(--accent); border: 1px solid var(--accent); padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: bold; }
+.delivery-badge { font-size: 0.68rem; font-weight: normal; border: 1px solid var(--error); color: var(--error) !important; padding: 0.1rem 0.4rem; border-radius: 4px; vertical-align: middle; margin-left: 0.5rem; white-space: nowrap; }
+.category-options-row { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin-top: 0.6rem; font-size: 0.85rem; }
+.category-options-row .small-select select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 0.2rem 0.4rem; margin-left: 0.3rem; }
+
+/* --- Responsive (celular / pantallas angostas) --- */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+@media (max-width: 640px) {
+  .top-bar { flex-wrap: wrap; justify-content: center; gap: 0.6rem; padding: 1rem; text-align: center; }
+
+  .dashboard-container { padding: 1rem 0.75rem; }
+  .admin-panel, .admin-panel.wide { max-width: 100%; }
+
+  .admin-nav-bar { justify-content: center; }
+  .admin-nav-buttons { justify-content: center; }
+  .btn-nav { padding: 0.5rem 0.7rem; font-size: 0.85rem; }
+
+  .admin-card { padding: 1rem; }
+
+  /* Cualquier form-row (Categoría/Precio, Platillo/Día/Botón, etc.)
+     pasa de columnas lado a lado a apilarse verticalmente */
+  .form-row { flex-direction: column; gap: 0.6rem; }
+  .form-row.align-end { align-items: stretch; }
+  .form-row .input-group { width: 100%; }
+
+  .form-actions { flex-direction: column; }
+  .form-actions button, .btn-primary-sm, .btn-secondary-sm { width: 100%; text-align: center; }
+
+  /* El botón "Agregar al Horario" y similares, ya no se cortan */
+  #schedule-quick-assign-form button { width: 100%; }
+
+  .preview-dish-item { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+  .action-btns { width: 100%; }
+  .action-btns button { flex: 1; }
+
+  .preview-category-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+  .menu-item { flex-direction: column; gap: 0.5rem; }
+  .price-container { align-items: flex-start; flex-direction: row; gap: 0.6rem; }
+
+  .modal-overlay { padding: 1rem; }
+  .login-card { padding: 1.5rem; }
+
+  .day-filter-container { flex-direction: column; gap: 0.6rem; }
+
+  /* La tabla de horario sigue con scroll horizontal propio, pero le
+     damos una pista visual (sombra) de que se puede deslizar */
+  .schedule-matrix-wrapper { -webkit-overflow-scrolling: touch; }
+}
+
+/* ── Carrito / pedido directo en la página ─────────────────────────────── */
+.checkbox-group { display: flex; flex-direction: column; gap: 0.4rem; max-height: 220px; overflow-y: auto; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); }
+.soup-size-inline-select { margin-top: 0.4rem; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem 0.4rem; font-size: 0.8rem; }
+.btn-add-cart { margin-top: 0.5rem; background: var(--accent); color: #0f172a; border: none; padding: 0.35rem 0.8rem; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
+.btn-add-cart:hover { opacity: 0.9; }
+
+.day-notice { background: rgba(245, 158, 11, 0.12); border: 1px solid var(--accent); color: var(--text) !important; padding: 0.8rem 1rem; border-radius: 8px; text-align: center; margin-bottom: 1rem; }
+
+/* Estado normal (en reposo): una pastillita chiquita abajo a la izquierda —
+   no tapa nada del menú ni de los botones de WhatsApp/Telegram. */
+.cart-mini-badge { position: fixed; bottom: 20px; left: 20px; z-index: 200; background: var(--accent); color: #0f172a; font-weight: bold; padding: 0.7rem 1.1rem; border-radius: 50px; box-shadow: 0 4px 12px rgba(0,0,0,0.35); cursor: pointer; font-size: 0.9rem; }
+.cart-mini-badge:hover { transform: scale(1.04); }
+
+/* Panel completo: solo aparece cuando el cliente le da clic a la pastillita,
+   para ver/editar el detalle o confirmar. Se puede volver a minimizar. */
+.cart-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 200; max-width: 700px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--accent); border-bottom: none; border-radius: 12px 12px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.4); max-height: 70vh; display: flex; flex-direction: column; }
+.cart-toggle-btn { background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.8rem; padding: 0.3rem 0.6rem; cursor: pointer; }
+
+/* Los botones flotantes de WhatsApp/Telegram suben más todavía mientras el
+   panel completo del carrito está abierto (la pastillita, al ser chica y a la
+   izquierda, nunca los tapa). */
+body.cart-expanded .social-float-stack { bottom: 165px; }
+.cart-header { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.2rem; border-bottom: 1px solid var(--border); }
+.cart-header h3 { margin: 0; color: var(--title-color); }
+.cart-items { overflow-y: auto; padding: 0.6rem 1.2rem; flex: 1; }
+.cart-item-group { border-bottom: 1px dashed var(--border); padding: 0.6rem 0; }
+.cart-item-group:last-child { border-bottom: none; }
+.cart-item-row { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; font-weight: bold; }
+.cart-accomp-row { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; margin-left: 1rem; margin-top: 0.3rem; font-size: 0.85rem; color: var(--desc-color); flex-wrap: wrap; }
+.cart-accomp-row select { background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 4px; padding: 0.2rem; font-size: 0.8rem; }
+.cart-item-qty { display: flex; align-items: center; gap: 0.3rem; }
+.cart-item-qty button { padding: 0.2rem 0.55rem; font-size: 0.85rem; }
+.cart-footer { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.2rem; border-top: 1px solid var(--border); }
+.cart-total { font-weight: bold; font-size: 1.1rem; color: var(--accent); }
+
+@media (max-width: 700px) {
+  .cart-panel { border-radius: 12px 12px 0 0; max-width: 100%; }
+  .cart-item-row, .cart-accomp-row { flex-wrap: wrap; }
+}

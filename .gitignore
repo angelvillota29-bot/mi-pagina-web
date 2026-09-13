@@ -1,0 +1,11 @@
+# Datos reales del restaurante (pedidos, menú, contraseñas) e imágenes
+# subidas -- viven en volúmenes persistentes de Easypanel, nunca en el
+# repositorio. Si alguna vez corres esto localmente, esto evita subirlos
+# sin querer.
+/data/
+/uploads/*
+!/uploads/.gitkeep
+
+# Basura común de editor / sistema operativo
+.DS_Store
+Thumbs.db

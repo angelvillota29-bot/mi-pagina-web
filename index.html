@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menú Digital & Panel</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="bg-overlay" class="bg-overlay"></div>
+  <div id="social-float-stack" class="social-float-stack">
+    <a id="whatsapp-float-btn" class="social-float whatsapp-float hidden" target="_blank" rel="noopener noreferrer">
+      <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3 18.6-68.1-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-32.6-16.3-54-29.1-75.5-66-5.7-9.8 5.7-9.1 16.3-30.3 1.8-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 35.2 15.2 49 16.5 66.6 13.9 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+      <span id="whatsapp-number-text" class="whatsapp-text"></span>
+    </a>
+    <a id="telegram-float-btn" class="social-float telegram-float hidden" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+      <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path fill="currentColor" d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm121.8 169.9l-40.7 191.8c-3 13.6-11.1 16.9-22.4 10.5l-62-45.7-29.9 28.8c-3.3 3.3-6.1 6.1-12.5 6.1l4.4-63.1 114.9-103.8c5-4.4-1.1-6.9-7.7-2.5l-142 89.4-61.2-19.1c-13.3-4.2-13.6-13.3 2.8-19.7l239.1-92.2c11.1-4 20.8 2.7 17.2 19.5z"/></svg>
+    </a>
+    <a id="x-float-btn" class="social-float x-float hidden" target="_blank" rel="noopener noreferrer" aria-label="X">
+      <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+    </a>
+    <a id="instagram-float-btn" class="social-float instagram-float hidden" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+      <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"/></svg>
+    </a>
+  </div>
+
+  <header class="top-bar">
+    <div id="guest-actions"><button id="open-login-btn" class="btn-primary-sm">Iniciar Sesión</button></div>
+    <div id="user-actions" class="hidden">
+      <span id="user-display"></span>
+      <button id="logout-btn" class="btn-secondary-sm">Cerrar Sesión</button>
+    </div>
+  </header>
+
+  <div id="login-modal" class="modal-overlay hidden">
+    <div class="login-card">
+      <button id="close-modal-btn" class="close-btn">&times;</button>
+      <h2>Iniciar Sesión</h2>
+      <form id="login-form">
+        <div class="input-group"><label>Correo</label><input type="email" id="email" required></div>
+        <div class="input-group"><label>Contraseña</label><input type="password" id="password" required></div>
+        <p id="error-msg" class="error-msg"></p>
+        <button type="submit" class="btn-primary">Ingresar</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="delete-modal" class="modal-overlay hidden">
+    <div class="login-card alert-card">
+      <h3 id="delete-modal-title" class="alert-title">¡Advertencia!</h3>
+      <p id="delete-modal-msg">¿Estás seguro?</p>
+      <div class="modal-actions">
+        <button id="cancel-delete-btn" class="btn-secondary-sm">Cancelar</button>
+        <button id="confirm-delete-btn" class="btn-danger-sm">Sí, Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <main id="menu-view" class="menu-container">
+    <div class="header">
+      <h1 id="brand-title">Restaurante</h1>
+      <img id="brand-logo" class="brand-logo-img hidden" src="" alt="Logo">
+      <div class="day-filter-container">
+        <label>Menú para el día:</label>
+        <select id="public-day-select">
+          <option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Domingo</option>
+        </select>
+        <label>Comida:</label>
+        <select id="public-mealtime-select">
+          <option value="Desayuno">Desayuno</option><option value="Almuerzo">Almuerzo</option><option value="Cena">Cena</option>
+        </select>
+      </div>
+      <div id="takeout-public-container" class="takeout-option-box hidden">
+        <label class="checkbox-label"><input type="checkbox" id="public-takeout-checkbox"><span>¿Para llevar? (<strong id="takeout-fee-display">+$ 0</strong>)</span></label>
+        <div id="soup-size-selector" class="soup-size-selector hidden">
+          <label for="soup-size-select">Tamaño de la sopa:</label>
+          <select id="soup-size-select"><option value="Normal">Normal</option><option value="Grande">Grande</option></select>
+        </div>
+      </div>
+    </div>
+    <div id="public-menu-list"></div>
+  </main>
+
+  <div id="cart-mini-badge" class="cart-mini-badge hidden">
+    🛒 <span id="cart-mini-count">0</span> · <span id="cart-mini-total">$ 0</span>
+  </div>
+
+  <div id="cart-panel" class="cart-panel hidden">
+    <div class="cart-header">
+      <h3>Tu pedido</h3>
+      <button id="cart-toggle-btn" class="cart-toggle-btn" type="button">▼ Minimizar</button>
+    </div>
+    <div id="cart-items" class="cart-items"></div>
+    <div class="cart-footer">
+      <div class="cart-total">Total: <span id="cart-total-amount">$ 0</span></div>
+      <button id="cart-checkout-btn" class="btn-primary-sm" type="button">Confirmar pedido</button>
+    </div>
+  </div>
+
+  <div id="checkout-modal" class="modal-overlay hidden">
+    <div class="login-card">
+      <button id="close-checkout-modal-btn" class="close-btn" type="button">&times;</button>
+      <h2>Confirmar tu pedido</h2>
+      <form id="checkout-form">
+        <div class="input-group"><label>Nombre</label><input type="text" id="checkout-nombre" required></div>
+        <div class="input-group"><label>Dirección de entrega</label><input type="text" id="checkout-direccion" required></div>
+        <div class="input-group"><label>Teléfono</label><input type="tel" id="checkout-telefono" required></div>
+        <div class="input-group"><label>Nota (opcional)</label><input type="text" id="checkout-nota" placeholder="Ej. llamar al llegar"></div>
+        <p id="checkout-error-msg" class="error-msg"></p>
+        <button type="submit" class="btn-primary">Enviar pedido</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="order-confirmed-modal" class="modal-overlay hidden">
+    <div class="login-card alert-card" style="border-color: var(--success);">
+      <h3 class="alert-title" style="color: var(--success) !important;">¡Pedido recibido!</h3>
+      <p id="order-confirmed-msg"></p>
+      <div class="modal-actions"><button id="order-confirmed-close-btn" class="btn-primary-sm" type="button">Listo</button></div>
+    </div>
+  </div>
+
+  <main id="dashboard-view" class="dashboard-container hidden">
+    <div class="admin-panel wide">
+      <div class="admin-nav-bar">
+        <div class="admin-nav-buttons">
+          <button id="nav-categories-btn" class="btn-nav">Categorías</button>
+          <button id="nav-mealtimes-btn" class="btn-nav">Franjas Horarias</button>
+          <button id="nav-customize-btn" class="btn-nav">Personalizar</button>
+          <button id="nav-new-dish-btn" class="btn-nav">Platillos</button>
+          <button id="nav-schedule-btn" class="btn-nav">Horario y Stock</button>
+          <button id="nav-orders-btn" class="btn-nav hidden">Pedidos</button>
+          <button id="nav-n8n-btn" class="btn-nav">Conexión N8N</button>
+          <button id="nav-users-btn" class="btn-nav hidden">Usuarios</button>
+        </div>
+      </div>
+
+      <div id="welcome-section" class="welcome-card">
+        <h1>¡Bienvenido!</h1>
+        <p>Selecciona una opción.</p>
+      </div>
+
+      <div id="section-categories" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2 id="category-form-title">Crear Nueva Categoría</h2>
+          <form id="create-category-form">
+            <input type="hidden" id="edit-category-id">
+            <div class="input-group"><input type="text" id="category-name-input" placeholder="Nombre de la categoría" required></div>
+            <div class="form-row">
+              <div class="input-group"><label>Tipo de comida</label><select id="category-mealtime-input"><option value="Desayuno">Desayuno</option><option value="Almuerzo" selected>Almuerzo</option><option value="Cena">Cena</option></select></div>
+              <div class="input-group"><label>Rol en almuerzo completo</label><select id="category-role-input">
+                <option value="">Ninguno (categoría normal)</option>
+                <option value="sopa">Sopa</option>
+                <option value="principio">Principio</option>
+                <option value="proteina">Proteína</option>
+                <option value="acompanamiento">Acompañamiento</option>
+              </select></div>
+            </div>
+            <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="category-delivery-input" checked> Disponible a domicilio</label></div>
+            <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="category-exento-input"> Exenta de cargo de empaque/domicilio (ej. Principios)</label></div>
+            <div class="form-actions">
+              <button type="submit" id="btn-save-category" class="btn-primary-sm">Agregar</button>
+              <button type="button" id="btn-cancel-edit-category" class="btn-secondary-sm hidden">Cancelar</button>
+            </div>
+          </form>
+        </section>
+        <section class="admin-card"><div id="categories-management-list" class="preview-box"></div></section>
+      </div>
+
+      <div id="section-mealtimes" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2>Franjas Horarias (Desayuno / Almuerzo / Cena)</h2>
+          <p class="text-muted">Define el rango de horas de cada comida. El menú público detecta la hora actual del cliente y le muestra automáticamente la comida que corresponde (el cliente puede cambiarla manualmente igual).</p>
+          <form id="mealtimes-config-form">
+            <div class="form-row">
+              <div class="input-group"><label>Desayuno — Inicio</label><input type="time" id="mealtime-desayuno-start"></div>
+              <div class="input-group"><label>Desayuno — Fin</label><input type="time" id="mealtime-desayuno-end"></div>
+            </div>
+            <div class="form-row">
+              <div class="input-group"><label>Almuerzo — Inicio</label><input type="time" id="mealtime-almuerzo-start"></div>
+              <div class="input-group"><label>Almuerzo — Fin</label><input type="time" id="mealtime-almuerzo-end"></div>
+            </div>
+            <div class="form-row">
+              <div class="input-group"><label>Cena — Inicio</label><input type="time" id="mealtime-cena-start"></div>
+              <div class="input-group"><label>Cena — Fin</label><input type="time" id="mealtime-cena-end"></div>
+            </div>
+            <button class="btn-primary-sm">Guardar Franjas</button>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Restricción de Zona para Domicilio (opcional)</h2>
+          <p class="text-muted">Este dato NUNCA se muestra ni se aplica en la página pública — solo viaja en la API (get-menu.php) protegida con tu API Key, para que n8n compare la dirección del cliente contra este rango y decida si el domicilio aplica o no.</p>
+          <form id="delivery-zone-form">
+            <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="delivery-zone-enable-checkbox"> Habilitar restricción de zona</label></div>
+            <div class="input-group"><label>Dirección del local</label><input type="text" id="delivery-zone-address-input" placeholder="Ej. Calle 5 # 23-10, Cali"></div>
+            <p class="text-muted">Rango de zona a la que sí se hace domicilio:</p>
+            <div class="form-row">
+              <div class="input-group"><label>Carrera desde</label><input type="number" id="delivery-zone-carrera-from-input" placeholder="Ej. 1"></div>
+              <div class="input-group"><label>Carrera hasta</label><input type="number" id="delivery-zone-carrera-to-input" placeholder="Ej. 40"></div>
+            </div>
+            <div class="form-row">
+              <div class="input-group"><label>Calle desde</label><input type="number" id="delivery-zone-calle-from-input" placeholder="Ej. 1"></div>
+              <div class="input-group"><label>Calle hasta</label><input type="number" id="delivery-zone-calle-to-input" placeholder="Ej. 45"></div>
+            </div>
+            <button class="btn-primary-sm">Guardar</button>
+          </form>
+        </section>
+      </div>
+
+      <div id="section-customize" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2>Identidad y Logo</h2>
+          <form id="customize-identity-form">
+            <div class="input-group"><label>Nombre</label><input type="text" id="restaurant-name-input" required></div>
+            <div class="input-group"><label>Logo (JPG/PNG)</label><input type="file" id="restaurant-logo-file" accept="image/*"></div>
+            <div class="input-group"><label>O URL de Logo</label><input type="url" id="restaurant-logo-input"></div>
+            <div class="form-actions"><button class="btn-primary-sm">Guardar</button><button type="button" id="remove-logo-btn" class="btn-secondary-sm">Quitar Logo</button></div>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Contacto WhatsApp</h2>
+          <form id="customize-whatsapp-form">
+            <div class="input-group"><input type="tel" id="whatsapp-number-input" placeholder="573001234567"></div>
+            <div class="input-group"><input type="text" id="whatsapp-message-input" placeholder="Mensaje predeterminado"></div>
+            <div class="form-actions"><button class="btn-primary-sm">Guardar</button><button type="button" id="remove-whatsapp-btn" class="btn-secondary-sm">Quitar</button></div>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Redes Sociales</h2>
+          <p class="text-muted">Solo se muestran los botones flotantes de las redes que llenes. Deja vacío el campo para que ese botón no aparezca.</p>
+          <form id="customize-social-form">
+            <div class="input-group"><label>Telegram (link de tu canal/usuario)</label><input type="url" id="telegram-url-input" placeholder="https://t.me/tu_usuario"></div>
+            <div class="input-group"><label>X / Twitter</label><input type="url" id="x-url-input" placeholder="https://x.com/tu_usuario"></div>
+            <div class="input-group"><label>Instagram</label><input type="url" id="instagram-url-input" placeholder="https://instagram.com/tu_usuario"></div>
+            <div class="form-actions"><button class="btn-primary-sm">Guardar</button><button type="button" id="remove-social-btn" class="btn-secondary-sm">Quitar Todas</button></div>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Imagen de Fondo</h2>
+          <form id="customize-bg-form">
+            <div class="input-group"><input type="file" id="bg-image-file" accept="image/*"></div>
+            <div class="input-group"><input type="url" id="bg-image-url-input" placeholder="URL de fondo"></div>
+            <div class="checkbox-group"><label class="checkbox-label"><input type="checkbox" id="bg-overlay-checkbox" checked> Oscurecer fondo</label></div>
+            <div class="form-actions"><button class="btn-primary-sm">Aplicar</button><button type="button" id="remove-bg-btn" class="btn-secondary-sm">Quitar</button></div>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Tipografías</h2>
+          <form id="customize-fonts-form">
+            <div class="input-group"><label>Títulos</label><select id="title-font-select"><option value="system-ui, sans-serif">Moderna</option><option value="'Georgia', serif">Clásica</option><option value="'Courier New', monospace">Monospace</option></select></div>
+            <div class="input-group"><label>Texto</label><select id="body-font-select"><option value="system-ui, sans-serif">Moderna</option><option value="'Georgia', serif">Clásica</option><option value="'Courier New', monospace">Monospace</option></select></div>
+            <button class="btn-primary-sm">Aplicar</button>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Gama de Colores</h2>
+          <form id="customize-colors-form">
+            <div class="form-row">
+              <div class="input-group"><label>Color Primario</label><input type="color" id="accent-color-input" value="#f59e0b"></div>
+              <div class="input-group"><label>Color Títulos</label><input type="color" id="title-color-input" value="#f59e0b"></div>
+              <div class="input-group"><label>Fondo Principal</label><input type="color" id="bg-color-input" value="#0f172a"></div>
+            </div>
+            <div class="form-row">
+              <div class="input-group"><label>Fondo Tarjetas</label><input type="color" id="card-bg-color-input" value="#1e293b"></div>
+              <div class="input-group"><label>Color Descripciones</label><input type="color" id="desc-color-input" value="#94a3b8"></div>
+            </div>
+            <div class="form-actions"><button class="btn-primary-sm">Aplicar</button><button type="button" id="reset-colors-btn" class="btn-secondary-sm">Restablecer</button></div>
+          </form>
+        </section>
+      </div>
+
+      <div id="section-dishes" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2 id="dish-form-title">Crear / Modificar Platillo</h2>
+          <form id="create-dish-form">
+            <input type="hidden" id="edit-dish-id">
+            <div class="form-row">
+              <div class="input-group"><label>Categoría</label><select id="select-category" required></select></div>
+              <div class="input-group"><label>Precio</label><input type="text" id="dish-price" required></div>
+            </div>
+            <div class="input-group"><label>Nombre</label><input type="text" id="dish-name" required></div>
+            <div class="input-group"><label>Descripción</label><input type="text" id="dish-desc"></div>
+            <div class="input-group" id="dish-accompaniments-wrap">
+              <label>Acompañamientos por defecto (solo para Proteínas — se agregan solos al carrito y el cliente los puede cambiar o quitar)</label>
+              <div id="dish-accompaniments-list" class="checkbox-group"></div>
+            </div>
+            <div class="input-group">
+              <label>Imagen del platillo (opcional)</label>
+              <div id="dish-image-preview-wrap" class="hidden"><img id="dish-image-preview" class="dish-image-preview" src="" alt="Vista previa"></div>
+              <input type="file" id="dish-image-file" accept="image/*">
+              <label class="checkbox-label"><input type="checkbox" id="dish-image-remove-checkbox"> Quitar imagen actual</label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="btn-save-dish" class="btn-primary-sm">Guardar</button>
+              <button type="button" id="btn-cancel-edit-dish" class="btn-secondary-sm hidden">Cancelar</button>
+            </div>
+          </form>
+        </section>
+        <section class="admin-card"><div id="dishes-management-list" class="preview-box"></div></section>
+      </div>
+
+      <div id="section-schedule" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2>Modo de menú</h2>
+          <p class="text-muted">Cambiar de modo NO borra nada -- el horario semanal y el menú único quedan guardados por separado, así que puedes ir y volver sin perder lo ya armado.</p>
+          <div class="checkbox-group">
+            <label class="checkbox-label"><input type="radio" name="menu-mode" id="menu-mode-semanal" value="semanal"> Menú de la semana (un horario distinto por día)</label>
+            <label class="checkbox-label"><input type="radio" name="menu-mode" id="menu-mode-unico" value="unico"> Menú único (el mismo todos los días)</label>
+          </div>
+        </section>
+        <section class="admin-card" id="weekly-schedule-ui">
+          <h2>Asignar al Horario y Editar Stock</h2>
+          <form id="schedule-quick-assign-form" class="form-row align-end">
+            <div class="input-group"><label>Platillo</label><select id="assign-select-dish" required></select></div>
+            <div class="input-group"><label>Día</label><select id="assign-select-day"><option>Lunes</option><option>Martes</option><option>Miércoles</option><option>Jueves</option><option>Viernes</option><option>Sábado</option><option>Domingo</option></select></div>
+            <button class="btn-primary-sm">Agregar al Horario</button>
+          </form>
+          <div class="schedule-matrix-wrapper">
+            <table class="schedule-matrix-table">
+              <thead><tr><th>Categorías</th><th>Lunes</th><th>Martes</th><th>Miércoles</th><th>Jueves</th><th>Viernes</th><th>Sábado</th><th>Domingo</th></tr></thead>
+              <tbody id="matrix-body"></tbody>
+            </table>
+          </div>
+        </section>
+        <section class="admin-card hidden" id="single-menu-ui">
+          <h2>Platillos del menú único</h2>
+          <p class="text-muted">El stock que pongas aquí es el "stock del día": se descuenta con cada pedido y se reinicia solo a este mismo número cada día que empieza.</p>
+          <form id="single-menu-assign-form" class="form-row align-end">
+            <div class="input-group"><label>Platillo</label><select id="single-assign-select-dish" required></select></div>
+            <button class="btn-primary-sm">Agregar al menú único</button>
+          </form>
+          <div id="single-menu-list" class="preview-box"></div>
+        </section>
+        <section class="admin-card">
+          <h2>Configuración "Para Llevar"</h2>
+          <form id="takeout-config-form">
+            <div class="checkbox-group"><label class="checkbox-label"><input type="checkbox" id="takeout-enable-checkbox"> Habilitar Para Llevar</label></div>
+            <div class="input-group"><label>Costo adicional (platillos que no son sopa)</label><input type="text" id="takeout-fee-input"></div>
+            <p class="text-muted takeout-hint">Si una categoría contiene la palabra "sopa" en su nombre, el cliente elige el tamaño y se le cobra el costo de abajo en vez del costo general.</p>
+            <div class="form-row">
+              <div class="input-group"><label>Costo extra sopa Normal</label><input type="text" id="soup-fee-normal-input" placeholder="0"></div>
+              <div class="input-group"><label>Costo extra sopa Grande</label><input type="text" id="soup-fee-grande-input" placeholder="0"></div>
+            </div>
+            <button class="btn-primary-sm">Guardar</button>
+          </form>
+        </section>
+      </div>
+
+      <div id="section-orders" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2>Notificación de pedidos por correo</h2>
+          <p class="text-muted">Cuando un cliente confirma un pedido en la página, te avisamos por correo (vía Resend, gratis en resend.com — crea una cuenta y saca tu API Key en resend.com/api-keys).</p>
+          <p><strong>API Key de Resend:</strong> <span id="resend-status-badge" class="badge-soldout">Verificando…</span></p>
+          <p class="text-muted">Por seguridad, esta llave ya NO se guarda ni se pega aquí en la página (así nadie puede verla consultando la página) — se configura como variable de entorno <code>RESEND_API_KEY</code> directamente en tu hosting (Easypanel → tu app → Environment).</p>
+          <form id="notify-config-form">
+            <div class="form-row">
+              <div class="input-group"><label>Tu correo (para recibir los avisos)</label><input type="email" id="notify-owner-email-input" placeholder="tucorreo@ejemplo.com"></div>
+            </div>
+            <button class="btn-primary-sm">Guardar</button>
+          </form>
+        </section>
+        <section class="admin-card">
+          <h2>Pedidos recibidos</h2>
+          <div id="orders-management-list" class="preview-box"></div>
+        </section>
+      </div>
+
+      <div id="section-n8n" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2>Conexión API HTTP para N8N</h2>
+          <p>N8N necesita una clave API para leer el menú y modificar el stock de forma segura.</p>
+          <p><strong>Tu API Key:</strong> <span id="n8n-status-badge" class="badge-soldout">Verificando…</span></p>
+          <p class="text-muted">Por seguridad, esta llave ya no se genera ni se guarda desde la página (para que nadie pueda verla consultando la página) — se configura como variable de entorno <code>N8N_API_KEY</code> directamente en tu hosting (Easypanel → tu app → Environment). Usa ese MISMO valor en el header <code>Authorization</code> de tus flujos de N8N.</p>
+          <button id="generate-n8n-key-btn" class="btn-secondary-sm" type="button">Sugerir una key nueva (solo para copiar)</button>
+          <div id="n8n-key-suggestion" class="hidden">
+            <div class="input-group"><label>Cópiala y pégala en Easypanel como N8N_API_KEY</label><input type="text" id="n8n-suggested-key" readonly></div>
+          </div>
+
+          <h3 class="n8n-endpoint-title">1. Consultar todo el menú</h3>
+          <p>Método <code>GET</code>, URL: <code>/api/get-menu.php</code>, Header: <code>Authorization: Bearer [TU_KEY]</code></p>
+          <p>Devuelve el menú completo organizado por día (Lunes a Domingo), con nombre, precio, descripción, categoría, tipo de comida (Desayuno/Almuerzo/Cena), disponibilidad a domicilio, imagen, disponibilidad, stock y el costo extra de "para llevar" ya calculado por platillo.</p>
+          <p><strong>Parámetros opcionales (van en la URL):</strong></p>
+          <p><code>?mealTime=Almuerzo</code> — solo trae esa comida (Desayuno/Almuerzo/Cena). También acepta <code>?mealTime=now</code> para que detecte automáticamente la comida vigente según la hora del servidor.</p>
+          <p><code>?day=Lunes</code> — solo trae ese día. También acepta <code>?day=today</code> para el día actual.</p>
+          <p>Ejemplo para traer "solo lo que se puede comprar ahora mismo": <code>/api/get-menu.php?day=today&mealTime=now</code></p>
+          <p><strong>Zona de domicilio:</strong> la respuesta también incluye <code>deliveryZoneConfig</code> con la dirección de tu local y el rango de carreras/calles a las que sí haces domicilio (si lo configuraste en "Franjas Horarias"). Este dato solo llega hasta acá, protegido con tu API Key — nunca se muestra en la página pública. n8n puede comparar la carrera/calle de la dirección que le dé el cliente contra ese rango para decidir si el domicilio aplica.</p>
+
+          <h3 class="n8n-endpoint-title">2. Actualizar stock de un platillo</h3>
+          <p>Método <code>POST</code>, URL: <code>/api/update-stock.php</code>, Header: <code>Authorization: Bearer [TU_KEY]</code>, Body: <code>{ "id": 1, "stock": 19 }</code></p>
+        </section>
+      </div>
+
+      <div id="section-users" class="admin-sub-section hidden">
+        <section class="admin-card">
+          <h2>Crear Nuevo Usuario</h2>
+          <form id="create-user-form">
+            <div class="input-group"><label>Correo</label><input type="email" id="new-user-email" required></div>
+            <div class="input-group"><label>Contraseña</label><input type="password" id="new-user-password" required></div>
+            <button class="btn-primary-sm">Crear</button>
+          </form>
+        </section>
+        <section class="admin-card"><div id="users-management-list" class="preview-box"></div></section>
+      </div>
+    </div>
+  </main>
+  <!-- Aviso de privacidad -- botón fijo en la esquina, siempre visible, no
+       tapa ni lo tapan el carrito ni los flotantes de redes/chat. -->
+  <button id="privacy-notice-btn" class="privacy-notice-btn" type="button">🔒 Tus datos</button>
+  <div id="privacy-modal" class="modal-overlay hidden">
+    <div class="login-card privacy-card">
+      <button id="close-privacy-modal-btn" class="close-btn" type="button">&times;</button>
+      <h2>Cómo usamos tus datos</h2>
+      <div class="privacy-body">
+        <p><strong>Responsable del tratamiento:</strong> Restaurante La Delicia es el único
+        responsable del tratamiento de tus datos personales recogidos en esta página y en sus
+        canales de atención (WhatsApp, Telegram, chat web). Ninguna otra empresa ni proveedor
+        externo es responsable de tus datos ni decide qué se hace con ellos.</p>
+        <p><strong>¿Qué datos pedimos?</strong> Cuando haces un pedido en esta página: tu nombre,
+        dirección de entrega, teléfono y, si la dejas, una nota. Si nos escribes por el chat de
+        esta página, WhatsApp o Telegram, guardamos esa conversación para poder atenderte.</p>
+        <p><strong>¿Para qué los usamos?</strong> Únicamente para preparar y entregar tu pedido,
+        contactarte si hay algún problema con él, y responder tus preguntas. No vendemos ni
+        compartimos tus datos con nadie fuera del restaurante.</p>
+        <p><strong>¿Quién los ve?</strong> Solo el personal autorizado del restaurante.</p>
+        <p><strong>¿Cuánto tiempo los guardamos?</strong> El tiempo necesario para gestionar tu
+        pedido y atenderte; después, puedes pedirnos que los eliminemos.</p>
+        <p><strong>Tus derechos</strong> (Ley 1581 de 2012 — Habeas Data, Colombia): puedes pedirnos
+        en cualquier momento que te digamos qué datos tuyos tenemos, que los corrijamos, o que los
+        eliminemos por completo. Escríbenos por WhatsApp o Telegram (los botones flotantes de esta
+        página) y lo hacemos tan pronto lo pidas.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+
+  <!-- Chat de IA (Forja) -- solo responde en este dominio, configurado en WEB_SITES del bot. -->
+  <script src="https://forja-starter-35ca99.angelvillota4.workers.dev/widget.js"
+          data-nombre="Aquí Esta Elisa"
+          data-saludo="¡Hola! ¿Quieres ver el menú de hoy o hacer un pedido?"
+          data-tema="oscuro"
+          data-color="#ff6b4a"></script>
+</body>
+</html>
