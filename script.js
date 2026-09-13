@@ -67,22 +67,21 @@ async function loadAllData() {
     if (categoriesData.length === 0) {
       categoriesData = [{ id: 1, name: "Sopas / Sancocho / Caldo" }];
     }
-    // Compatibilidad con categorías creadas antes de esta función
+    // Compatibilidad con categorías creadas antes de esta función. Los
+    // acompañamientos por defecto (arroz, ensalada, principio a elegir) se
+    // configuran UNA vez por categoría (típicamente "Proteína") y aplican a
+    // TODOS sus platillos, toda la semana -- así no hay que repetirlo plato
+    // por plato.
     categoriesData.forEach(c => {
       if (!c.mealTime) c.mealTime = 'Almuerzo';
       if (c.deliveryEnabled === undefined) c.deliveryEnabled = true;
       if (c.role === undefined) c.role = '';
+      if (!Array.isArray(c.defaultAccompaniments)) c.defaultAccompaniments = [];
+      if (c.incluyePrincipio === undefined) c.incluyePrincipio = false;
+      if (c.principioOpcional === undefined) c.principioOpcional = true;
+      if (c.principioDescuento === undefined) c.principioDescuento = 0;
     });
     dishesData = data.dishes || [];
-    dishesData.forEach(d => {
-      // Migración: los platillos viejos traían defaultAccompanimentIds (solo
-      // ids). Ahora cada acompañamiento por defecto es un objeto con si es
-      // opcional y cuánto se descuenta si el cliente lo quita.
-      if (!Array.isArray(d.defaultAccompaniments)) {
-        const idsViejos = Array.isArray(d.defaultAccompanimentIds) ? d.defaultAccompanimentIds : [];
-        d.defaultAccompaniments = idsViejos.map(dishId => ({ dishId, opcional: true, descuento: 0 }));
-      }
-    });
     scheduleData = data.schedule || [];
     scheduleData.forEach(s => {
       if (s.stockDefinido === undefined) s.stockDefinido = s.stock ?? null;
@@ -284,6 +283,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('nav-n8n-btn').addEventListener('click', () => { showSection('section-n8n'); loadConfigStatus(); });
   document.getElementById('nav-users-btn').addEventListener('click', () => { showSection('section-users'); renderUsersSection(); });
 
+  // El bloque de "con qué viene por defecto" solo tiene sentido para la
+  // categoría de Proteína -- se oculta para cualquier otro rol.
+  function toggleCategoryProteinaConfig() {
+    const esProteina = document.getElementById('category-role-input').value === 'proteina';
+    document.getElementById('category-proteina-config').classList.toggle('hidden', !esProteina);
+  }
+  document.getElementById('category-role-input').addEventListener('change', toggleCategoryProteinaConfig);
+  document.getElementById('category-incluye-principio').addEventListener('change', (e) => {
+    document.getElementById('category-principio-extra').classList.toggle('hidden', !e.target.checked);
+  });
+
   document.getElementById('create-category-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const editId = document.getElementById('edit-category-id').value;
@@ -292,10 +302,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const role = document.getElementById('category-role-input').value;
     const deliveryEnabled = document.getElementById('category-delivery-input').checked;
     const exentoEmpaque = document.getElementById('category-exento-input').checked;
+    const incluyePrincipio = document.getElementById('category-incluye-principio').checked;
+    const principioOpcional = document.getElementById('category-principio-opcional').checked;
+    const principioDescuento = Math.max(0, parseInt(document.getElementById('category-principio-descuento').value, 10) || 0);
+    const defaultAccompaniments = Array.from(document.querySelectorAll('#category-accompaniments-list .accomp-check:checked')).map(el => {
+      const dishId = Number(el.value);
+      const opcionalEl = document.querySelector(`#category-accompaniments-list .accomp-opcional[data-for="${dishId}"]`);
+      const descuentoEl = document.querySelector(`#category-accompaniments-list .accomp-descuento[data-for="${dishId}"]`);
+      return { dishId, opcional: opcionalEl ? opcionalEl.checked : true, descuento: Math.max(0, parseInt(descuentoEl?.value, 10) || 0) };
+    });
     if (!name) return;
+    const campos = { name, mealTime, role, deliveryEnabled, exentoEmpaque, incluyePrincipio, principioOpcional, principioDescuento, defaultAccompaniments };
     if (editId) {
       const cat = categoriesData.find(c => c.id === Number(editId));
-      if (cat) Object.assign(cat, { name, mealTime, role, deliveryEnabled, exentoEmpaque });
+      if (cat) Object.assign(cat, campos);
       await saveAllData();
       renderCategoriesSection();
       renderDishesSection();
@@ -303,7 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       resetCategoryForm();
       alert("Categoría actualizada");
     } else {
-      categoriesData.push({ id: Date.now(), name, mealTime, role, deliveryEnabled, exentoEmpaque });
+      categoriesData.push({ id: Date.now(), ...campos });
       await saveAllData();
       renderCategoriesSection();
       renderDishesSection();
@@ -318,6 +338,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('btn-save-category').textContent = 'Agregar';
     document.getElementById('btn-cancel-edit-category').classList.add('hidden');
     document.getElementById('category-delivery-input').checked = true;
+    document.getElementById('category-principio-extra').classList.add('hidden');
+    renderCategoryAccompanimentsPicker([]);
+    toggleCategoryProteinaConfig();
   }
   window.editCategory = (id) => {
     const cat = categoriesData.find(c => c.id === id);
@@ -328,6 +351,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('category-role-input').value = cat.role || '';
     document.getElementById('category-delivery-input').checked = cat.deliveryEnabled !== false;
     document.getElementById('category-exento-input').checked = !!cat.exentoEmpaque;
+    document.getElementById('category-incluye-principio').checked = !!cat.incluyePrincipio;
+    document.getElementById('category-principio-opcional').checked = cat.principioOpcional !== false;
+    document.getElementById('category-principio-descuento').value = cat.principioDescuento || 0;
+    document.getElementById('category-principio-extra').classList.toggle('hidden', !cat.incluyePrincipio);
+    renderCategoryAccompanimentsPicker(cat.defaultAccompaniments || []);
+    toggleCategoryProteinaConfig();
     document.getElementById('category-form-title').textContent = `Editando: ${cat.name}`;
     document.getElementById('btn-save-category').textContent = 'Actualizar';
     document.getElementById('btn-cancel-edit-category').classList.remove('hidden');
@@ -378,6 +407,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
   const ROLE_LABELS = { sopa: 'Sopa', principio: 'Principio', proteina: 'Proteína', acompanamiento: 'Acompañamiento' };
   function renderCategoriesSection() {
+    // Solo refresca las opciones del picker si el formulario está vacío
+    // (creando una nueva categoría) -- si está editando una, no le pises la
+    // selección que ya cargó editCategory().
+    if (!document.getElementById('edit-category-id').value) {
+      renderCategoryAccompanimentsPicker([]);
+      toggleCategoryProteinaConfig();
+    }
     const list = document.getElementById('categories-management-list');
     list.innerHTML = '';
     categoriesData.forEach(cat => list.innerHTML += `<div class="preview-category">
@@ -555,12 +591,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       name: document.getElementById('dish-name').value.trim(),
       desc: document.getElementById('dish-desc').value.trim(),
       price: formatCurrency(document.getElementById('dish-price').value),
-      defaultAccompaniments: Array.from(document.querySelectorAll('#dish-accompaniments-list .accomp-check:checked')).map(el => {
-        const dishId = Number(el.value);
-        const opcionalEl = document.querySelector(`#dish-accompaniments-list .accomp-opcional[data-for="${dishId}"]`);
-        const descuentoEl = document.querySelector(`#dish-accompaniments-list .accomp-descuento[data-for="${dishId}"]`);
-        return { dishId, opcional: opcionalEl ? opcionalEl.checked : true, descuento: Math.max(0, parseInt(descuentoEl?.value, 10) || 0) };
-      })
     };
 
     const imageFile = document.getElementById('dish-image-file').files[0];
@@ -594,7 +624,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('dish-name').value = dish.name;
     document.getElementById('dish-desc').value = dish.desc || "";
     document.getElementById('dish-price').value = dish.price.replace(/\D/g, "");
-    renderDishAccompanimentsPicker(dish.defaultAccompaniments || []);
     document.getElementById('dish-image-file').value = '';
     document.getElementById('dish-image-remove-checkbox').checked = false;
     const previewWrap = document.getElementById('dish-image-preview-wrap');
@@ -626,24 +655,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       renderPublicMenu();
     });
   };
-  // selectedAccompaniments: [{ dishId, opcional, descuento }]
-  function renderDishAccompanimentsPicker(selectedAccompaniments) {
-    const wrap = document.getElementById('dish-accompaniments-list');
-    const catIds = categoriesData.filter(c => c.role === 'acompanamiento' || c.role === 'principio').map(c => c.id);
-    const opciones = dishesData.filter(d => catIds.includes(d.categoryId));
+  // selectedAccompaniments: [{ dishId, opcional, descuento }] -- se usa para
+  // configurar, UNA sola vez por categoría (ej. "Proteína"), con qué viene
+  // por defecto CUALQUIER platillo de esa categoría (ver renderMenuModeUI...
+  // en realidad ver el bloque de categorías más abajo).
+  function renderCategoryAccompanimentsPicker(selectedAccompaniments) {
+    const wrap = document.getElementById('category-accompaniments-list');
+    if (!wrap) return;
+    const acompCatIds = categoriesData.filter(c => c.role === 'acompanamiento').map(c => c.id);
+    const opciones = dishesData.filter(d => acompCatIds.includes(d.categoryId));
     if (opciones.length === 0) {
-      wrap.innerHTML = '<p class="text-muted">Sin platillos en categorías con rol "Principio" o "Acompañamiento" todavía. Créalos primero en Categorías y Platillos.</p>';
+      wrap.innerHTML = '<p class="text-muted">Sin platillos en categorías con rol "Acompañamiento" todavía. Créalos primero.</p>';
       return;
     }
     wrap.innerHTML = opciones.map(d => {
-      const cat = categoriesData.find(c => c.id === d.categoryId);
-      const rolLabel = cat?.role === 'principio' ? 'Principio' : 'Acompañamiento (seco)';
       const actual = selectedAccompaniments.find(a => a.dishId === d.id);
       const marcado = !!actual;
       const opcional = actual ? actual.opcional !== false : true;
       const descuento = actual?.descuento || 0;
       return `<div class="accomp-picker-row">
-        <label class="checkbox-label"><input type="checkbox" class="accomp-check" value="${d.id}" onchange="toggleAccompPickerRow(this)" ${marcado ? 'checked' : ''}> ${d.name} <span class="text-muted">(${rolLabel})</span></label>
+        <label class="checkbox-label"><input type="checkbox" class="accomp-check" value="${d.id}" onchange="toggleAccompPickerRow(this)" ${marcado ? 'checked' : ''}> ${d.name}</label>
         <span class="accomp-picker-extra" style="${marcado ? '' : 'display:none;'}">
           <label class="text-muted">Opcional (el cliente lo puede quitar) <input type="checkbox" class="accomp-opcional" data-for="${d.id}" ${opcional ? 'checked' : ''}></label>
           <label class="text-muted">Descuento si lo quita <input type="number" class="accomp-descuento" data-for="${d.id}" min="0" value="${descuento}" style="width:90px"></label>
@@ -659,7 +690,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sel = document.getElementById('select-category');
     sel.innerHTML = '<option value="">-- Seleccionar --</option>';
     categoriesData.forEach(cat => sel.innerHTML += `<option value="${cat.id}">${cat.name}</option>`);
-    renderDishAccompanimentsPicker([]);
 
     const list = document.getElementById('dishes-management-list');
     list.innerHTML = '';
@@ -950,18 +980,10 @@ document.addEventListener('DOMContentLoaded', async () => {
           }
 
           const imageHtml = dish.imageUrl ? `<img class="menu-item-image" src="${dish.imageUrl}" alt="${dish.name}">` : '';
-          // El tamaño de sopa se elige aquí mismo (Normal ya viene marcado
-          // por defecto, se puede cambiar a Grande) -- ya no es una ventanita
-          // de confirmar/cancelar al darle "+ Agregar".
-          const necesitaTamano = isSoupCategory && takeoutConfig.enabled && !cat.exentoEmpaque;
-          const tamanoSelectorHtml = necesitaTamano
-            ? `<select id="soup-size-inline-${dish.id}" class="soup-size-inline-select"><option value="Normal" selected>Normal</option><option value="Grande">Grande</option></select>`
-            : '';
 
           html += `<div class="menu-item ${isSoldOut ? 'sold-out' : ''}">
             <div class="item-info">${imageHtml}<div class="item-info-text"><h3>${dish.name} ${stockBadge}</h3>${dish.desc ? `<p>${dish.desc}</p>` : ''}${soupTag}</div></div>
             <div class="price-container"><span class="price">${price}</span>${(isPublicTakeoutActive && !cat.exentoEmpaque) ? '<span class="takeout-badge">Incluye empaque</span>' : ''}
-              ${tamanoSelectorHtml}
               ${(!isSoldOut && esHoy) ? `<button type="button" class="btn-add-cart" onclick="addToCart(${dish.id})">+ Agregar</button>` : ''}
             </div>
           </div>`;
@@ -1015,32 +1037,67 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!item || item.available === false || item.stock === 0) { alert('Ese platillo ya no está disponible.'); return; }
     const dish = dishesData.find(d => d.id === dishId);
     const cat = categoriesData.find(c => c.id === dish?.categoryId);
-    let tamano = null;
-    if (takeoutConfig.enabled && cat && !cat.exentoEmpaque && esCategoriaSopa(cat)) {
-      // El tamaño se elige con el selector que aparece junto al platillo en
-      // el menú (Normal ya viene marcado por defecto).
-      tamano = document.getElementById(`soup-size-inline-${dishId}`)?.value || 'Normal';
-    }
+    // El tamaño (sopas) empieza en Normal y se puede cambiar después, ya en
+    // el carrito -- no hace falta elegirlo antes de agregar.
+    let tamano = (takeoutConfig.enabled && cat && !cat.exentoEmpaque && esCategoriaSopa(cat)) ? 'Normal' : null;
     const extra = cargoParaLlevar(cat, tamano);
     const key = newCartKey();
     cartData.push({ key, dishId: item.id, scheduleId: item.scheduleId, name: item.name, price: parseCurrencyNumber(item.price) + extra, cantidad: 1, tipo: 'principal', parentKey: null, day, mealTime, tamano, empaqueFee: extra });
-    (dish?.defaultAccompaniments || []).forEach(acc => {
-      const accItem = getMenuItemForDay(acc.dishId, day);
-      if (accItem && accItem.available !== false && accItem.stock !== 0) {
-        // Los acompañamientos siempre son GRATIS -- ya están incluidos en el
-        // precio del plato principal, tanto el que viene por defecto como
-        // cualquier otro por el que el cliente lo cambie (swapAccompaniment).
-        // sourceDefaultDishId identifica de forma permanente qué "puesto"
-        // ocupa (principio, arroz, ensalada...) aunque el cliente lo cambie
-        // por otro -- así el servidor sabe, al final, si ese puesto quedó
-        // realmente vacío (quitado) o solo cambiado (sigue igual de gratis).
-        cartData.push({
-          key: newCartKey(), dishId: accItem.id, scheduleId: accItem.scheduleId, name: accItem.name,
-          price: 0, cantidad: 1, tipo: 'acompanamiento', parentKey: key, day, mealTime, esDefault: true,
-          sourceDefaultDishId: acc.dishId, opcional: !!acc.opcional, descuentoSiSeQuita: acc.descuento || 0,
+
+    // Con qué viene por defecto: se configura UNA vez por categoría (ej.
+    // "Proteína"), no plato por plato -- aplica a cualquier platillo de esa
+    // categoría, todos los días. Los acompañamientos siempre son GRATIS, ya
+    // están incluidos en el precio del principal.
+    if (cat) {
+      // Principio a elegir: se agrega solo el primero disponible ese día, y
+      // el cliente lo puede cambiar por cualquier otro principio (dropdown
+      // en el carrito). "PRINCIPIO" identifica ese puesto de forma fija,
+      // aunque el platillo elegido cambie.
+      if (cat.incluyePrincipio) {
+        const principioCatIds = categoriesData.filter(c => c.role === 'principio').map(c => c.id);
+        const principioDisponible = dishesData.find(d => {
+          if (!principioCatIds.includes(d.categoryId)) return false;
+          const it = getMenuItemForDay(d.id, day);
+          return it && it.available !== false && it.stock !== 0;
         });
+        if (principioDisponible) {
+          const accItem = getMenuItemForDay(principioDisponible.id, day);
+          cartData.push({
+            key: newCartKey(), dishId: accItem.id, scheduleId: accItem.scheduleId, name: accItem.name,
+            price: 0, cantidad: 1, tipo: 'acompanamiento', parentKey: key, day, mealTime, esDefault: true,
+            sourceDefaultDishId: 'PRINCIPIO', opcional: cat.principioOpcional !== false, descuentoSiSeQuita: cat.principioDescuento || 0,
+          });
+        }
       }
-    });
+      // Acompañamientos fijos (arroz, ensalada...) -- sourceDefaultDishId
+      // identifica de forma permanente qué "puesto" ocupa, aunque el
+      // cliente lo cambie por otro -- así el servidor sabe, al final, si ese
+      // puesto quedó realmente vacío (quitado) o solo cambiado (sigue gratis).
+      (cat.defaultAccompaniments || []).forEach(acc => {
+        const accItem = getMenuItemForDay(acc.dishId, day);
+        if (accItem && accItem.available !== false && accItem.stock !== 0) {
+          cartData.push({
+            key: newCartKey(), dishId: accItem.id, scheduleId: accItem.scheduleId, name: accItem.name,
+            price: 0, cantidad: 1, tipo: 'acompanamiento', parentKey: key, day, mealTime, esDefault: true,
+            sourceDefaultDishId: acc.dishId, opcional: !!acc.opcional, descuentoSiSeQuita: acc.descuento || 0,
+          });
+        }
+      });
+    }
+    renderCart();
+  };
+  // Cambia el tamaño (Normal/Grande) de una sopa YA agregada al carrito --
+  // recalcula el cargo de empaque en el momento, sin tener que quitarla y
+  // volver a agregarla.
+  window.changeCartTamano = (key, nuevoTamano) => {
+    const item = cartData.find(i => i.key === key);
+    if (!item) return;
+    const dish = dishesData.find(d => d.id === item.dishId);
+    const cat = categoriesData.find(c => c.id === dish?.categoryId);
+    const nuevoExtra = cargoParaLlevar(cat, nuevoTamano);
+    item.price = item.price - (item.empaqueFee || 0) + nuevoExtra;
+    item.empaqueFee = nuevoExtra;
+    item.tamano = nuevoTamano;
     renderCart();
   };
   window.changeCartQty = (key, delta) => {
@@ -1116,7 +1173,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const acomps = cartData.filter(i => i.parentKey === p.key);
       html += `<div class="cart-item-group">
         <div class="cart-item-row">
-          <span class="cart-item-name">${p.cantidad} x ${p.name}${p.empaqueFee ? ` <span class="takeout-badge">${p.tamano ? `Empaque ${p.tamano}` : 'Incluye empaque'} +${formatCurrency(p.empaqueFee)}</span>` : ''}</span>
+          <span class="cart-item-name">${p.cantidad} x ${p.name}</span>
           <span class="cart-item-price">${formatCurrency(p.price * p.cantidad)}</span>
           <div class="cart-item-qty">
             <button type="button" class="btn-secondary-sm" onclick="changeCartQty('${p.key}', -1)">-</button>
@@ -1124,6 +1181,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button type="button" class="btn-danger-sm" onclick="removeFromCart('${p.key}')">X</button>
           </div>
         </div>
+        ${p.tamano ? `<div class="cart-accomp-row">
+          <label class="text-muted">Tamaño:
+            <select onchange="changeCartTamano('${p.key}', this.value)">
+              <option value="Normal" ${p.tamano === 'Normal' ? 'selected' : ''}>Normal</option>
+              <option value="Grande" ${p.tamano === 'Grande' ? 'selected' : ''}>Grande</option>
+            </select>
+          </label>
+          <span class="takeout-badge">Empaque +${formatCurrency(p.empaqueFee)}</span>
+        </div>` : (p.empaqueFee ? `<div class="cart-accomp-row"><span class="takeout-badge">Incluye empaque +${formatCurrency(p.empaqueFee)}</span></div>` : '')}
         ${acomps.map(a => {
           const rol = categoriesData.find(c => c.id === dishesData.find(d => d.id === a.dishId)?.categoryId)?.role || 'acompanamiento';
           const opciones = getAccompanimentOptions(a.day, rol).filter(o => o.id !== a.dishId);

@@ -119,17 +119,25 @@ function cargoParaLlevarMenu($cat, $takeoutConfig, $isSoup) {
     return (int) ($takeoutConfig['fee'] ?? 0);
 }
 
-// Con qué viene el plato (principio a elegir, arroz/ensalada del "seco"...)
-// -- para que el bot pueda describirlo bien y saber qué es opcional.
-function incluyeDelPlato($dish, $dishesById, $categoriesById) {
+// Con qué viene el plato -- se configura UNA vez por categoría (típicamente
+// "Proteína"), no plato por plato: el "seco" fijo (arroz, ensalada) más,
+// opcionalmente, un principio a elegir entre los disponibles ese día/modo.
+function incluyeDelPlato($cat, $dishesById, $principiosDisponibles) {
     $incluye = [];
-    foreach (($dish['defaultAccompaniments'] ?? []) as $def) {
+    if (!empty($cat['incluyePrincipio']) && $principiosDisponibles) {
+        $incluye[] = [
+            'nombre' => 'Principio a elegir: ' . implode(', ', $principiosDisponibles),
+            'tipo' => 'principio',
+            'opcional' => !empty($cat['principioOpcional']),
+            'descuentoSiSeQuita' => (int) ($cat['principioDescuento'] ?? 0),
+        ];
+    }
+    foreach (($cat['defaultAccompaniments'] ?? []) as $def) {
         $accDish = $dishesById[$def['dishId']] ?? null;
         if (!$accDish) continue;
-        $accCat = $categoriesById[$accDish['categoryId']] ?? null;
         $incluye[] = [
             'nombre' => $accDish['name'],
-            'tipo' => ($accCat['role'] ?? '') === 'principio' ? 'principio' : 'acompanamiento',
+            'tipo' => 'acompanamiento',
             'opcional' => !empty($def['opcional']),
             'descuentoSiSeQuita' => (int) ($def['descuento'] ?? 0),
         ];
@@ -143,6 +151,22 @@ $diasAIncluir = $resolvedDay ? [$resolvedDay] : $diasSemanaPhp;
 
 $menuByDay = [];
 foreach ($diasAIncluir as $dia) {
+    // Principios disponibles ESE día/modo (para describir el "a elegir" con
+    // nombres reales, y para que incluyeDelPlato() sepa si de verdad hay
+    // alguno disponible).
+    $principiosDisponibles = [];
+    foreach ($schedule as $s) {
+        if ($menuMode === 'semanal' && $s['day'] !== $dia) continue;
+        $d = $dishesById[$s['dishId']] ?? null;
+        if (!$d) continue;
+        $c = $categoriesById[$d['categoryId']] ?? null;
+        if (($c['role'] ?? '') !== 'principio') continue;
+        $available = $s['available'] ?? true;
+        $stock = array_key_exists('stock', $s) ? $s['stock'] : null;
+        if ($available === false || $stock === 0) continue;
+        $principiosDisponibles[] = $d['name'];
+    }
+
     $items = [];
     foreach ($schedule as $s) {
         // Modo único: una sola lista de platillos, sin día -- se repite
@@ -172,7 +196,7 @@ foreach ($diasAIncluir as $dia) {
             'isSoldOut' => ($available === false) || ($stock === 0),
             'isSoupCategory' => $isSoup,
             'takeoutExtraCost' => cargoParaLlevarMenu($cat, $takeoutConfig, $isSoup),
-            'incluye' => incluyeDelPlato($dish, $dishesById, $categoriesById),
+            'incluye' => incluyeDelPlato($cat, $dishesById, $principiosDisponibles),
         ];
     }
     $menuByDay[$dia] = $items;

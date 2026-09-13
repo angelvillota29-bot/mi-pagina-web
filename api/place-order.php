@@ -145,21 +145,31 @@ foreach ($items as $item) {
         // Si el cliente quitó del todo un acompañamiento opcional (no lo
         // cambió por otro, lo quitó), y ese acompañamiento tiene configurado
         // un descuento, se resta aquí -- calculado por el SERVIDOR contra su
-        // propia copia de defaultAccompaniments, nunca confiando en lo que
-        // mande el navegador. "sourceDefaultDishId" identifica el puesto
-        // (principio/arroz/ensalada) aunque el cliente lo haya cambiado por
-        // otro platillo del mismo tipo -- eso NO cuenta como "quitado".
+        // propia copia de la config de la CATEGORÍA (se configura una vez por
+        // categoría, ej. "Proteína", no plato por plato), nunca confiando en
+        // lo que mande el navegador. "sourceDefaultDishId" identifica el
+        // puesto (principio/arroz/ensalada) aunque el cliente lo haya
+        // cambiado por otro platillo del mismo tipo -- eso NO cuenta como
+        // "quitado".
         $itemKey = $item['key'] ?? null;
-        foreach (($dish['defaultAccompaniments'] ?? []) as $def) {
+        $catDelPlato = $categoriesById[$dish['categoryId']] ?? [];
+        $puestosOpcionales = [];
+        if (!empty($catDelPlato['incluyePrincipio']) && !empty($catDelPlato['principioOpcional']) && !empty($catDelPlato['principioDescuento'])) {
+            $puestosOpcionales[] = ['dishId' => 'PRINCIPIO', 'descuento' => (int) $catDelPlato['principioDescuento']];
+        }
+        foreach (($catDelPlato['defaultAccompaniments'] ?? []) as $def) {
             if (empty($def['opcional']) || empty($def['descuento'])) continue;
+            $puestosOpcionales[] = ['dishId' => $def['dishId'], 'descuento' => (int) $def['descuento']];
+        }
+        foreach ($puestosOpcionales as $puesto) {
             $puestoOcupado = false;
             foreach ($items as $hijo) {
-                if (($hijo['tipo'] ?? null) === 'acompanamiento' && ($hijo['parentKey'] ?? null) === $itemKey && ($hijo['sourceDefaultDishId'] ?? null) === $def['dishId']) {
+                if (($hijo['tipo'] ?? null) === 'acompanamiento' && ($hijo['parentKey'] ?? null) === $itemKey && ($hijo['sourceDefaultDishId'] ?? null) === $puesto['dishId']) {
                     $puestoOcupado = true;
                     break;
                 }
             }
-            if (!$puestoOcupado) $precioUnitario = max(0, $precioUnitario - (int) $def['descuento']);
+            if (!$puestoOcupado) $precioUnitario = max(0, $precioUnitario - $puesto['descuento']);
         }
     }
     $total += $precioUnitario * $cantidad;

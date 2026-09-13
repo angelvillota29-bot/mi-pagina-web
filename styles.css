@@ -194,7 +194,6 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
 /* ── Carrito / pedido directo en la página ─────────────────────────────── */
 .checkbox-group { display: flex; flex-direction: column; gap: 0.4rem; max-height: 220px; overflow-y: auto; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); }
-.soup-size-inline-select { margin-top: 0.4rem; background: var(--bg); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 0.25rem 0.4rem; font-size: 0.8rem; }
 .btn-add-cart { margin-top: 0.5rem; background: var(--accent); color: #0f172a; border: none; padding: 0.35rem 0.8rem; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; white-space: nowrap; }
 .btn-add-cart:hover { opacity: 0.9; }
 
@@ -230,4 +229,8 @@ body.cart-expanded .social-float-stack { bottom: 165px; }
 @media (max-width: 700px) {
   .cart-panel { border-radius: 12px 12px 0 0; max-width: 100%; }
   .cart-item-row, .cart-accomp-row { flex-wrap: wrap; }
+  /* En celular el botón "Confirmar pedido" se ve chueco al quedar apretado
+     contra la orilla -- se acomoda centrado, apilado sobre el total. */
+  .cart-footer { flex-direction: column; gap: 0.6rem; }
+  #cart-checkout-btn { width: 100%; text-align: center; }
 }

@@ -158,6 +158,19 @@
             </div>
             <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="category-delivery-input" checked> Disponible a domicilio</label></div>
             <div class="input-group"><label class="checkbox-label"><input type="checkbox" id="category-exento-input"> Exenta de cargo de empaque/domicilio (ej. Principios)</label></div>
+
+            <div class="input-group hidden" id="category-proteina-config">
+              <label>Con qué viene por defecto cada plato de esta categoría</label>
+              <p class="text-muted">Se configura una sola vez aquí -- ya no hace falta marcarlo plato por plato. Aplica a TODOS los platillos de esta categoría, toda la semana.</p>
+              <label class="checkbox-label"><input type="checkbox" id="category-incluye-principio"> Incluye un Principio a elegir (el cliente elige entre los principios disponibles ese día)</label>
+              <div class="accomp-picker-extra hidden" id="category-principio-extra">
+                <label class="text-muted"><input type="checkbox" id="category-principio-opcional" checked> Opcional (lo puede quitar)</label>
+                <label class="text-muted">Descuento si lo quita <input type="number" id="category-principio-descuento" min="0" value="0" style="width:90px"></label>
+              </div>
+              <label style="margin-top:0.6rem;display:block;">Acompañamientos fijos (ej. Arroz, Ensalada)</label>
+              <div id="category-accompaniments-list"></div>
+            </div>
+
             <div class="form-actions">
               <button type="submit" id="btn-save-category" class="btn-primary-sm">Agregar</button>
               <button type="button" id="btn-cancel-edit-category" class="btn-secondary-sm hidden">Cancelar</button>
@@ -280,10 +293,6 @@
             </div>
             <div class="input-group"><label>Nombre</label><input type="text" id="dish-name" required></div>
             <div class="input-group"><label>Descripción</label><input type="text" id="dish-desc"></div>
-            <div class="input-group" id="dish-accompaniments-wrap">
-              <label>Acompañamientos por defecto (solo para Proteínas — se agregan solos al carrito y el cliente los puede cambiar o quitar)</label>
-              <div id="dish-accompaniments-list" class="checkbox-group"></div>
-            </div>
             <div class="input-group">
               <label>Imagen del platillo (opcional)</label>
               <div id="dish-image-preview-wrap" class="hidden"><img id="dish-image-preview" class="dish-image-preview" src="" alt="Vista previa"></div>
